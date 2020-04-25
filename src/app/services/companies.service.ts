@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { Company } from '../classes/company';
 import { CompanyWithIncomes } from '../classes/companyWithIncomes';
 import { IncomeResponse, Income } from '../classes/income';
@@ -15,35 +15,69 @@ export class CompaniesService {
   private basicUrl = 'https://recruitment.hal.skygate.io/';
   private companiesUrl = this.basicUrl + 'companies/';
   private incomesUrl = this.basicUrl + 'incomes/';
+  private companiesMap = new Map<number, CompanyWithIncomes>();
 
-  getCompanies(): Observable<Company[]> {
-    return this.http.get<Company[]>(this.companiesUrl);
-  }
-
-  getIncomesOfFilteredCompanies(
-    companies: Company[]
-  ): Observable<CompanyWithIncomes[]> {
-    const requests = companies.map(company => {
-      return this.getSingleCompany(company.id);
-    });
-
-    return forkJoin(requests).pipe(
-      map((incomes: IncomeResponse[]) => {
-        return this.getCompaniesWithIncomes(incomes, companies);
+  public getCompanies(): Observable<Company[]> {
+    return this.http.get<Company[]>(this.companiesUrl).pipe(
+      catchError(error => {
+        console.log(error.message);
+        return of(error);
       })
     );
   }
 
-  getCompaniesWithIncomes(
+  public getIncomesOfFilteredCompanies(
+    companies: Company[]
+  ): Observable<CompanyWithIncomes[]> {
+    const requests: Array<Observable<IncomeResponse>> = [];
+    companies.map(company => {
+      if (!this.companiesMap.has(company.id)) {
+        requests.push(this.getSingleCompany(company.id));
+      }
+    });
+
+    if (requests && requests.length > 0) {
+      return forkJoin(requests).pipe(
+        map((incomes: IncomeResponse[]) => {
+          const companiesWithIncomes = this.getCompaniesWithIncomes(
+            incomes,
+            companies
+          );
+
+          companiesWithIncomes.forEach(company => {
+            if (!this.companiesMap.has(company.id)) {
+              this.companiesMap.set(company.id, company);
+            }
+          });
+
+          return this.getCachedCompanies(companies);
+        })
+      );
+    } else {
+      return of(this.getCachedCompanies(companies));
+    }
+  }
+
+  private getCachedCompanies(companies: Company[]): CompanyWithIncomes[] {
+    const companiesWithIncomesToDisplay: CompanyWithIncomes[] = [];
+    companies.forEach(company => {
+      if (this.companiesMap.has(company.id)) {
+        companiesWithIncomesToDisplay.push(this.companiesMap.get(company.id));
+      }
+    });
+    return companiesWithIncomesToDisplay;
+  }
+
+  private getCompaniesWithIncomes(
     incomes: IncomeResponse[],
     companies: Company[]
   ): CompanyWithIncomes[] {
-    const companiesWithIncomes: CompanyWithIncomes[] = companies.map(
-      company => {
-        const companyIncomes = incomes.find(income => income.id === company.id);
-
+    const companiesWithIncomes: CompanyWithIncomes[] = [];
+    companies.forEach(company => {
+      const companyIncomes = incomes.find(income => income.id === company.id);
+      if (companyIncomes) {
         const { total, average } = this.getTotalIncome(companyIncomes);
-        return {
+        const companyWithIncome = {
           ...company,
           incomes: companyIncomes
             ? companyIncomes.incomes
@@ -52,12 +86,14 @@ export class CompaniesService {
           averageIncome: average,
           lastMonthIncome: this.getLastMonthIncome(companyIncomes)
         };
+
+        companiesWithIncomes.push(companyWithIncome);
       }
-    );
+    });
     return companiesWithIncomes;
   }
 
-  getTotalIncome(
+  private getTotalIncome(
     companyIncomes: IncomeResponse
   ): { total: number; average: number } {
     const allIncomes = companyIncomes.incomes.map(income =>
@@ -72,7 +108,7 @@ export class CompaniesService {
     return { total: totalIncome, average: averageIncome };
   }
 
-  getLastMonthIncome(companyIncomes: IncomeResponse): number {
+  private getLastMonthIncome(companyIncomes: IncomeResponse): number {
     const incomesWithDates: Income[] = companyIncomes.incomes.map(income => {
       const newDate = new Date(income.date);
       return {
@@ -104,7 +140,12 @@ export class CompaniesService {
     return lastMonthIncomesSum;
   }
 
-  getSingleCompany(id: number): Observable<IncomeResponse> {
-    return this.http.get<IncomeResponse>(this.incomesUrl + id);
+  private getSingleCompany(id: number): Observable<IncomeResponse> {
+    return this.http.get<IncomeResponse>(this.incomesUrl + id).pipe(
+      catchError(error => {
+        console.log(error.message);
+        return of(error);
+      })
+    );
   }
 }

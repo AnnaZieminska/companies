@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Company } from 'src/app/classes/company';
 import { CompanyWithIncomes } from 'src/app/classes/companyWithIncomes';
@@ -11,7 +11,7 @@ import { CompaniesService } from 'src/app/services/companies.service';
   templateUrl: './companies-container.component.html',
   styleUrls: ['./companies-container.component.scss']
 })
-export class CompaniesContainerComponent implements OnInit {
+export class CompaniesContainerComponent implements OnInit, OnDestroy {
   constructor(private companiesService: CompaniesService) {}
   elementsPerPage = 10;
   currentPage = 1;
@@ -25,22 +25,31 @@ export class CompaniesContainerComponent implements OnInit {
   filteredCompanies$ = new Observable<CompanyWithIncomes[]>();
   filterCompanies$ = new BehaviorSubject<string>('');
 
-  ngOnInit() {
-    this.companiesService.getCompanies().subscribe(companies => {
-      this.avaliableCompanies = companies;
-      this.sortAndfilterCompanies();
-    });
+  subs: Subscription = new Subscription();
 
-    this.filterCompanies$
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        tap(value => {
-          this.filterValue = value;
-          this.sortAndfilterCompanies();
-        })
-      )
-      .subscribe();
+  ngOnInit() {
+    this.subs.add(
+      this.companiesService.getCompanies().subscribe(companies => {
+        this.avaliableCompanies = companies;
+      })
+    );
+
+    this.subs.add(
+      this.filterCompanies$
+        .pipe(
+          debounceTime(300),
+          distinctUntilChanged(),
+          tap(value => {
+            this.filterValue = value;
+            this.sortAndfilterCompanies();
+          })
+        )
+        .subscribe()
+    );
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 
   sortAndfilterCompanies() {
