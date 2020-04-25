@@ -1,0 +1,47 @@
+<input (input)="filterCompanies$.next(inputValue.value)" #inputValue />
+<table>
+  <thead role="rowgroup">
+    <tr>
+      <th (click)="sortTable('id')">
+        Id
+      </th>
+      <th (click)="sortTable('name')">
+        Name
+      </th>
+      <th (click)="sortTable('city')">
+        City
+      </th>
+      <th (click)="sortTable('totalIncome')">
+        Total
+      </th>
+      <th (click)="sortTable('averageIncome')">
+        Average
+      </th>
+      <th (click)="sortTable('lastMonthIncome')">
+        Last month
+      </th>
+    </tr>
+  </thead>
+  <tbody role="rowgroup">
+    <tr *ngFor="let company of filteredCompanies$ | async">
+      <td>
+        {{ company.id }}
+      </td>
+      <td>
+        {{ company.name }}
+      </td>
+      <td>
+        {{ company.city }}
+      </td>
+      <td>
+        {{ company.totalIncome }}
+      </td>
+      <td>
+        {{ company.averageIncome }}
+      </td>
+      <td>
+        {{ company.lastMonthIncome }}
+      </td>
+    </tr>
+  </tbody>
+</table>
