@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
-import { Company } from 'src/app/classes/company';
 import { CompanyWithIncomes } from 'src/app/classes/companyWithIncomes';
-import { CompaniesService } from 'src/app/services/companies.service';
-import { Pagination } from 'src/app/classes/pagination';
 import { Header, SortEnum } from 'src/app/classes/header';
+import { Pagination } from 'src/app/classes/pagination';
+import { CompaniesService } from 'src/app/services/companies.service';
 
 @Component({
   selector: 'app-companies-container',
@@ -20,7 +19,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
   avaliableHeaders = Header.getAvaliableHeaders();
 
   filterValue = '';
-  avaliableCompanies: Company[] = [];
+  avaliableCompanies: CompanyWithIncomes[] = [];
   filteredCompanies$ = new Observable<CompanyWithIncomes[]>();
 
   subs: Subscription = new Subscription();
@@ -30,6 +29,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
       this.companiesService.getCompanies().subscribe(companies => {
         this.avaliableCompanies = companies;
         this.getAvaliablePages();
+        this.getSortedAndFilteredCompanies();
       })
     );
 
@@ -41,7 +41,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
           tap(value => {
             this.filterValue = value;
             this.currentPage = 1;
-            this.sortAndfilterCompanies();
+            this.getSortedAndFilteredCompanies();
           })
         )
         .subscribe()
@@ -52,7 +52,22 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  sortAndfilterCompanies() {
+  getSortedAndFilteredCompanies() {
+    if (this.avaliableCompanies && this.avaliableCompanies.length > 0) {
+      const sortedCompanies = this.sortCompanies();
+      const filteredCompanies = this.filterCompanies(sortedCompanies);
+
+      const endNumber = this.currentPage * this.elementsPerPage;
+      const startNumber = endNumber - this.elementsPerPage;
+      const companiesRange = filteredCompanies.slice(startNumber, endNumber);
+
+      this.filteredCompanies$ = this.companiesService.getCachedCompanies(
+        companiesRange
+      );
+    }
+  }
+
+  sortCompanies(): CompanyWithIncomes[] {
     const sortedCompanies = this.avaliableCompanies.sort((prev, curr) => {
       const sort = this.avaliableHeaders.find(header => header.isSelected);
       if (sort) {
@@ -67,7 +82,10 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
         return 1;
       }
     });
+    return sortedCompanies;
+  }
 
+  filterCompanies(sortedCompanies: CompanyWithIncomes[]): CompanyWithIncomes[] {
     const filteredCompanies = sortedCompanies.filter(company => {
       const filterText = this.filterValue
         ? this.filterValue.toLocaleLowerCase()
@@ -75,17 +93,13 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
 
       return (
         company.name.toLocaleLowerCase().indexOf(filterText) > -1 ||
-        company.city.toLocaleLowerCase().indexOf(filterText) > -1
+        company.city.toLocaleLowerCase().indexOf(filterText) > -1 ||
+        company.totalIncome.toString().startsWith(filterText) ||
+        company.averageIncome.toString().startsWith(filterText) ||
+        company.lastMonthIncome.toString().startsWith(filterText)
       );
     });
-
-    const endNumber = this.currentPage * this.elementsPerPage;
-    const startNumber = endNumber - this.elementsPerPage;
-    const companiesRange = filteredCompanies.slice(startNumber, endNumber);
-
-    this.filteredCompanies$ = this.companiesService.getIncomesOfFilteredCompanies(
-      companiesRange
-    );
+    return filteredCompanies;
   }
 
   sortTable(sortHeader: Header) {
@@ -95,7 +109,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
         header.name === sortHeader.name && !header.asc ? true : false;
     });
 
-    this.sortAndfilterCompanies();
+    this.getSortedAndFilteredCompanies();
   }
 
   getAvaliablePages() {
@@ -114,6 +128,6 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
 
   onChangePageNumber(pageNumber: number) {
     this.currentPage = pageNumber;
-    this.sortAndfilterCompanies();
+    this.getSortedAndFilteredCompanies();
   }
 }

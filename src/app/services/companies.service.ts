@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { Company } from '../classes/company';
 import { CompanyWithIncomes } from '../classes/companyWithIncomes';
 import { IncomeResponse, Income } from '../classes/income';
@@ -19,8 +19,11 @@ export class CompaniesService {
 
   public filterCompanies$ = new BehaviorSubject<string>('');
 
-  public getCompanies(): Observable<Company[]> {
+  public getCompanies(): Observable<CompanyWithIncomes[]> {
     return this.http.get<Company[]>(this.companiesUrl).pipe(
+      switchMap(companies => {
+        return this.getIncomesOfCompanies(companies);
+      }),
       catchError(error => {
         console.log(error.message);
         return of(error);
@@ -28,46 +31,42 @@ export class CompaniesService {
     );
   }
 
-  public getIncomesOfFilteredCompanies(
+  public getIncomesOfCompanies(
     companies: Company[]
   ): Observable<CompanyWithIncomes[]> {
     const requests: Array<Observable<IncomeResponse>> = [];
     companies.map(company => {
-      if (!this.companiesMap.has(company.id)) {
-        requests.push(this.getSingleCompany(company.id));
-      }
+      requests.push(this.getSingleCompany(company.id));
     });
 
-    if (requests && requests.length > 0) {
-      return forkJoin(requests).pipe(
-        map((incomes: IncomeResponse[]) => {
-          const companiesWithIncomes = this.getCompaniesWithIncomes(
-            incomes,
-            companies
-          );
+    return forkJoin(requests).pipe(
+      map((incomes: IncomeResponse[]) => {
+        const companiesWithIncomes = this.getCompaniesWithIncomes(
+          incomes,
+          companies
+        );
 
-          companiesWithIncomes.forEach(company => {
-            if (!this.companiesMap.has(company.id)) {
-              this.companiesMap.set(company.id, company);
-            }
-          });
+        companiesWithIncomes.forEach(company => {
+          if (!this.companiesMap.has(company.id)) {
+            this.companiesMap.set(company.id, company);
+          }
+        });
 
-          return this.getCachedCompanies(companies);
-        })
-      );
-    } else {
-      return of(this.getCachedCompanies(companies));
-    }
+        return companiesWithIncomes;
+      })
+    );
   }
 
-  private getCachedCompanies(companies: Company[]): CompanyWithIncomes[] {
+  public getCachedCompanies(
+    companies: CompanyWithIncomes[]
+  ): Observable<CompanyWithIncomes[]> {
     const companiesWithIncomesToDisplay: CompanyWithIncomes[] = [];
     companies.forEach(company => {
       if (this.companiesMap.has(company.id)) {
         companiesWithIncomesToDisplay.push(this.companiesMap.get(company.id));
       }
     });
-    return companiesWithIncomesToDisplay;
+    return of(companiesWithIncomesToDisplay);
   }
 
   private getCompaniesWithIncomes(
@@ -78,12 +77,11 @@ export class CompaniesService {
     companies.forEach(company => {
       const companyIncomes = incomes.find(income => income.id === company.id);
       if (companyIncomes) {
-        const { total, average } = this.getTotalIncome(companyIncomes);
+        const { total, average } = this.getTotalAndAverageIncome(
+          companyIncomes
+        );
         const companyWithIncome = {
           ...company,
-          incomes: companyIncomes
-            ? companyIncomes.incomes
-            : new Array<Income>(),
           totalIncome: total,
           averageIncome: average,
           lastMonthIncome: this.getLastMonthIncome(companyIncomes)
@@ -95,7 +93,7 @@ export class CompaniesService {
     return companiesWithIncomes;
   }
 
-  private getTotalIncome(
+  private getTotalAndAverageIncome(
     companyIncomes: IncomeResponse
   ): { total: number; average: number } {
     const allIncomes = companyIncomes.incomes.map(income =>
