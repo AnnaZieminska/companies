@@ -6,23 +6,12 @@
     >
       <thead>
         <tr>
-          <th class="column-id" (click)="sortTable('id')">
-            <span>Id</span>
-          </th>
-          <th (click)="sortTable('name')">
-            <span>Name</span>
-          </th>
-          <th class="column-details" (click)="sortTable('city')">
-            <span>City</span>
-          </th>
-          <th class="column-details" (click)="sortTable('totalIncome')">
-            <span>Total</span>
-          </th>
-          <th class="column-details" (click)="sortTable('averageIncome')">
-            <span>Average</span>
-          </th>
-          <th class="column-details" (click)="sortTable('lastMonthIncome')">
-            <span>Last month</span>
+          <th
+            *ngFor="let header of avaliableHeaders"
+            [ngClass]="header.class"
+            (click)="sortTable(header)"
+          >
+            <app-table-header [header]="header"></app-table-header>
           </th>
         </tr>
       </thead>

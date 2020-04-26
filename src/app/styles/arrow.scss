@@ -1,0 +1,49 @@
+.arrow-button {
+  @include fxflex;
+  height: 30px;
+  width: 32px;
+  border: 0;
+  background: #fff;
+  cursor: pointer;
+  &:focus {
+    outline: none;
+  }
+  .arrow {
+    border: solid $main-color;
+    border-width: 0 2px 2px 0;
+    padding: 4px;
+    &.left {
+      -webkit-transform: rotate(135deg);
+      transform: rotate(135deg);
+    }
+    &.right {
+      -webkit-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+    }
+    &.up {
+      -webkit-transform: rotate(-135deg);
+      transform: rotate(-135deg);
+    }
+    &.down {
+      -webkit-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+    &.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    &.end:before {
+      content: '';
+      content: '';
+      display: block;
+      height: 14px;
+      width: 2px;
+      background: $main-color;
+      transform: rotate(45deg);
+      position: absolute;
+      top: 7px;
+      right: -6px;
+    }
+  }
+}

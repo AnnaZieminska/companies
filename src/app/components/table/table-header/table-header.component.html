@@ -1,0 +1,7 @@
+<div *ngIf="header" class="fxrow fx-vert-center">
+  <span>{{ header.name }}</span>
+
+  <button *ngIf="header.isSelected" class="arrow-button">
+    <span class="arrow" [ngClass]="header.asc ? 'up' : 'down'"></span>
+  </button>
+</div>

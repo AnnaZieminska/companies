@@ -3,9 +3,9 @@ import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Company } from 'src/app/classes/company';
 import { CompanyWithIncomes } from 'src/app/classes/companyWithIncomes';
-import { Sort } from 'src/app/classes/sort';
 import { CompaniesService } from 'src/app/services/companies.service';
 import { Pagination } from 'src/app/classes/pagination';
+import { Header, SortEnum } from 'src/app/classes/header';
 
 @Component({
   selector: 'app-companies-container',
@@ -17,11 +17,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
   elementsPerPage = 25;
   currentPage = 1;
   avaliablePages: Pagination[] = [];
-
-  sort: Sort = {
-    asc: true,
-    name: 'id'
-  };
+  avaliableHeaders = Header.getAvaliableHeaders();
 
   filterValue = '';
   avaliableCompanies: Company[] = [];
@@ -58,12 +54,17 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
 
   sortAndfilterCompanies() {
     const sortedCompanies = this.avaliableCompanies.sort((prev, curr) => {
-      const prevValue = prev[this.sort.name];
-      const currValue = curr[this.sort.name];
-      if (this.sort.asc) {
-        return prevValue < currValue ? -1 : prevValue > currValue ? 1 : 0;
+      const sort = this.avaliableHeaders.find(header => header.isSelected);
+      if (sort) {
+        const prevValue = prev[SortEnum[sort.id]];
+        const currValue = curr[SortEnum[sort.id]];
+        if (sort.asc) {
+          return prevValue < currValue ? -1 : prevValue > currValue ? 1 : 0;
+        } else {
+          return prevValue > currValue ? -1 : prevValue < currValue ? 1 : 0;
+        }
       } else {
-        return prevValue > currValue ? -1 : prevValue < currValue ? 1 : 0;
+        return 1;
       }
     });
 
@@ -87,15 +88,12 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
     );
   }
 
-  sortTable(value: string) {
-    if (this.sort.name === value) {
-      this.sort.asc = !this.sort.asc;
-    } else {
-      this.sort = {
-        asc: true,
-        name: value
-      };
-    }
+  sortTable(sortHeader: Header) {
+    this.avaliableHeaders.forEach(header => {
+      header.isSelected = header.name === sortHeader.name;
+      header.asc =
+        header.name === sortHeader.name && !header.asc ? true : false;
+    });
 
     this.sortAndfilterCompanies();
   }
