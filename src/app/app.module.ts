@@ -8,6 +8,8 @@ import { CompaniesContainerComponent } from './components/companies-container/co
 import { CompaniesFilterComponent } from './components/companies-filter/companies-filter.component';
 import { TableFooterComponent } from './components/table/table-footer/table-footer.component';
 import { TableHeaderComponent } from './components/table/table-header/table-header.component';
+import { LoaderIndicatorComponent } from './components/loader-indicator/loader-indicator.component';
+import { ErrorIndicatorComponent } from './components/error-indicator/error-indicator.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,9 @@ import { TableHeaderComponent } from './components/table/table-header/table-head
     CompaniesContainerComponent,
     CompaniesFilterComponent,
     TableFooterComponent,
-    TableHeaderComponent
+    TableHeaderComponent,
+    LoaderIndicatorComponent,
+    ErrorIndicatorComponent
   ],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [],

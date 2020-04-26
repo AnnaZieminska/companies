@@ -5,7 +5,8 @@ import {
   Output,
   EventEmitter,
   SimpleChanges,
-  OnChanges
+  OnChanges,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { Pagination } from 'src/app/classes/pagination';
 import { BehaviorSubject } from 'rxjs';
@@ -13,11 +14,11 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'app-table-footer',
   templateUrl: './table-footer.component.html',
-  styleUrls: ['./table-footer.component.scss']
+  styleUrls: ['./table-footer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableFooterComponent implements OnInit, OnChanges {
   @Input() avaliablePages: Pagination[];
-  // @Input() currentPage: number;
 
   currentPage: number;
   get page(): number {

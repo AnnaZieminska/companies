@@ -1,10 +1,18 @@
 <footer class="fx-vert-center fx-horiz-end fxflex">
-  <button (click)="endPage('first')" class="arrow-button">
-    <span class="arrow left end" [class.disabled]="leftArrowDisabled"></span>
+  <button
+    (click)="endPage('first')"
+    class="arrow-button"
+    [disabled]="leftArrowDisabled"
+  >
+    <span class="arrow left end"></span>
   </button>
 
-  <button (click)="nextPage(-1)" class="arrow-button">
-    <span class="arrow left" [class.disabled]="leftArrowDisabled"></span>
+  <button
+    (click)="nextPage(-1)"
+    class="arrow-button"
+    [disabled]="leftArrowDisabled"
+  >
+    <span class="arrow left"></span>
   </button>
 
   <span
@@ -15,11 +23,19 @@
     >{{ page.number }}</span
   >
 
-  <button (click)="nextPage(1)" class="arrow-button">
-    <span class="arrow right" [class.disabled]="rightArrowDisabled"></span>
+  <button
+    (click)="nextPage(1)"
+    class="arrow-button"
+    [disabled]="rightArrowDisabled"
+  >
+    <span class="arrow right"></span>
   </button>
 
-  <button (click)="endPage('last')" class="arrow-button">
-    <span class="arrow right end" [class.disabled]="rightArrowDisabled"></span>
+  <button
+    (click)="endPage('last')"
+    class="arrow-button"
+    [disabled]="rightArrowDisabled"
+  >
+    <span class="arrow right end"></span>
   </button>
 </footer>

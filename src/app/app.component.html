@@ -12,3 +12,13 @@
     ></app-companies-container>
   </div>
 </div>
+
+<app-loader-indicator
+  *ngIf="showLoader$ | async as loader"
+  [loader]="loader"
+></app-loader-indicator>
+
+<app-error-indicator
+  *ngIf="showError$ | async as error"
+  [error]="error"
+></app-error-indicator>

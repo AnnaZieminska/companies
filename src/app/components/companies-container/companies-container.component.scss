@@ -54,6 +54,7 @@
         height: auto;
         border-bottom: 0;
         @include fxrow;
+        @include fxflex;
         @include fxrowwrap;
       }
 

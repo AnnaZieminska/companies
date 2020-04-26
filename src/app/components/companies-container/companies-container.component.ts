@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { CompanyWithIncomes } from 'src/app/classes/companyWithIncomes';
@@ -9,10 +15,14 @@ import { CompaniesService } from 'src/app/services/companies.service';
 @Component({
   selector: 'app-companies-container',
   templateUrl: './companies-container.component.html',
-  styleUrls: ['./companies-container.component.scss']
+  styleUrls: ['./companies-container.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CompaniesContainerComponent implements OnInit, OnDestroy {
-  constructor(private companiesService: CompaniesService) {}
+  constructor(
+    private companiesService: CompaniesService,
+    private cdr: ChangeDetectorRef
+  ) {}
   elementsPerPage = 25;
   currentPage = 1;
   avaliablePages: Pagination[] = [];
@@ -65,6 +75,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
         companiesRange
       );
     }
+    this.cdr.detectChanges();
   }
 
   sortCompanies(): CompanyWithIncomes[] {

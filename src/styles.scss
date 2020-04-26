@@ -38,6 +38,12 @@ body {
   align-items: center;
 }
 
+.fx-horiz-center {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
 .fx-horiz-end {
   -webkit-box-pack: end;
   -ms-flex-pack: end;
@@ -61,4 +67,36 @@ body {
 
 .text-center {
   text-align: center;
+}
+
+.overlay {
+  background: rgba(255, 255, 255, 0.7);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.clear {
+  cursor: pointer;
+  position: relative;
+  width: 22px;
+  height: 19px;
+  margin: 0 10px;
+  &:before,
+  &:after {
+    content: ' ';
+    position: absolute;
+    left: 10px;
+    height: 20px;
+    width: 2px;
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
 }

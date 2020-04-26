@@ -1,25 +1,9 @@
 @import '../../styles/vars';
 
 .clear {
-  cursor: pointer;
-  position: relative;
-  width: 22px;
-  height: 19px;
-  margin: 0 10px;
   &:before,
   &:after {
-    content: ' ';
-    position: absolute;
-    left: 10px;
-    height: 20px;
-    width: 2px;
     background-color: $main-color;
-  }
-  &:before {
-    transform: rotate(45deg);
-  }
-  &:after {
-    transform: rotate(-45deg);
   }
 }
 

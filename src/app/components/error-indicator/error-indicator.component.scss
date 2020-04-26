@@ -1,0 +1,31 @@
+@import '../../styles/vars';
+
+.error {
+  background: #fff;
+  border: 1px solid $warning-color;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 80%;
+  .error-message {
+    white-space: break-spaces;
+    word-break: break-word;
+    padding: 60px 50px;
+  }
+
+  .error-header {
+    position: relative;
+    background: $warning-color;
+    color: #fff;
+    height: 40px;
+    padding-left: 20px;
+    .clear {
+      position: absolute;
+      right: 5px;
+      top: 10px;
+      &:before,
+      &:after {
+        background-color: #fff;
+      }
+    }
+  }
+}

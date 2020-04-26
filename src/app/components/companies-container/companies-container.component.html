@@ -2,7 +2,9 @@
   <div class="table-container">
     <table
       class="companies-table"
-      [class.full-height]="data.companies && data.companies.length < 1"
+      [class.full-height]="
+        !data.companies || (data.companies && data.companies.length < 1)
+      "
     >
       <thead>
         <tr>
@@ -30,19 +32,19 @@
               {{ company.city }}
             </td>
             <td class="column-details" data-label="Total">
-              {{ company.totalIncome }}
+              {{ company.totalIncome | number: '1.2-2' }}
             </td>
             <td class="column-details" data-label="Average">
-              {{ company.averageIncome }}
+              {{ company.averageIncome | number: '1.2-2' }}
             </td>
             <td class="column-details" data-label="Last month">
-              {{ company.lastMonthIncome }}
+              {{ company.lastMonthIncome | number: '1.2-2' }}
             </td>
           </tr>
         </ng-container>
         <ng-template #noRecords>
           <td class="text-center" colspan="6">
-            Brak rekordów dla danej frazy
+            No records to display
           </td></ng-template
         >
       </tbody>

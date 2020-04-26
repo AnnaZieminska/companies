@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of, BehaviorSubject } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { Company } from '../classes/company';
 import { CompanyWithIncomes } from '../classes/companyWithIncomes';
 import { IncomeResponse, Income } from '../classes/income';
@@ -18,14 +18,20 @@ export class CompaniesService {
   private companiesMap = new Map<number, CompanyWithIncomes>();
 
   public filterCompanies$ = new BehaviorSubject<string>('');
+  public showLoader$ = new BehaviorSubject<string>('');
+  public showError$ = new BehaviorSubject<string>('');
 
   public getCompanies(): Observable<CompanyWithIncomes[]> {
+    this.showLoader('Fetching data');
     return this.http.get<Company[]>(this.companiesUrl).pipe(
       switchMap(companies => {
         return this.getIncomesOfCompanies(companies);
       }),
+      tap(() => {
+        this.showLoader('');
+      }),
       catchError(error => {
-        console.log(error.message);
+        this.showError(error.message);
         return of(error);
       })
     );
@@ -143,7 +149,7 @@ export class CompaniesService {
   private getSingleCompany(id: number): Observable<IncomeResponse> {
     return this.http.get<IncomeResponse>(this.incomesUrl + id).pipe(
       catchError(error => {
-        console.log(error.message);
+        this.showError(error.message);
         return of(error);
       })
     );
@@ -151,5 +157,14 @@ export class CompaniesService {
 
   public filterTable(searchText: string) {
     this.filterCompanies$.next(searchText);
+  }
+
+  public showLoader(message: string) {
+    this.showLoader$.next(message);
+  }
+
+  public showError(message: string) {
+    this.showLoader('');
+    this.showError$.next(message);
   }
 }
