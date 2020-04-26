@@ -1,47 +1,62 @@
-<input (input)="filterCompanies$.next(inputValue.value)" #inputValue />
-<table>
-  <thead role="rowgroup">
-    <tr>
-      <th (click)="sortTable('id')">
-        Id
-      </th>
-      <th (click)="sortTable('name')">
-        Name
-      </th>
-      <th (click)="sortTable('city')">
-        City
-      </th>
-      <th (click)="sortTable('totalIncome')">
-        Total
-      </th>
-      <th (click)="sortTable('averageIncome')">
-        Average
-      </th>
-      <th (click)="sortTable('lastMonthIncome')">
-        Last month
-      </th>
-    </tr>
-  </thead>
-  <tbody role="rowgroup">
-    <tr *ngFor="let company of filteredCompanies$ | async">
-      <td>
-        {{ company.id }}
-      </td>
-      <td>
-        {{ company.name }}
-      </td>
-      <td>
-        {{ company.city }}
-      </td>
-      <td>
-        {{ company.totalIncome }}
-      </td>
-      <td>
-        {{ company.averageIncome }}
-      </td>
-      <td>
-        {{ company.lastMonthIncome }}
-      </td>
-    </tr>
-  </tbody>
-</table>
+<ng-container *ngIf="{ companies: filteredCompanies$ | async } as data">
+  <div
+    class="table-container"
+    [class.full-height]="data.companies && data.companies.length < 1"
+  >
+    <table class="companies-table full-height">
+      <thead>
+        <tr>
+          <th class="column-id" (click)="sortTable('id')">
+            Id
+          </th>
+          <th (click)="sortTable('name')">
+            Name
+          </th>
+          <th class="column-details" (click)="sortTable('city')">
+            City
+          </th>
+          <th class="column-details" (click)="sortTable('totalIncome')">
+            Total
+          </th>
+          <th class="column-details" (click)="sortTable('averageIncome')">
+            Average
+          </th>
+          <th class="column-details" (click)="sortTable('lastMonthIncome')">
+            Last month
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container
+          *ngIf="data.companies && data.companies.length > 0; else noRecords"
+        >
+          <tr *ngFor="let company of data.companies">
+            <td class="column-id" data-label="Id">
+              {{ company.id }}
+            </td>
+            <td data-label="Name">
+              {{ company.name }}
+            </td>
+            <td class="column-details" data-label="City">
+              {{ company.city }}
+            </td>
+            <td class="column-details" data-label="Total">
+              {{ company.totalIncome }}
+            </td>
+            <td class="column-details" data-label="Average">
+              {{ company.averageIncome }}
+            </td>
+            <td class="column-details" data-label="Last month">
+              {{ company.lastMonthIncome }}
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noRecords>
+          <td class="text-center" colspan="6">
+            Brak rekordów dla danej frazy
+          </td></ng-template
+        >
+      </tbody>
+    </table>
+  </div>
+</ng-container>

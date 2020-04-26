@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Company } from 'src/app/classes/company';
 import { CompanyWithIncomes } from 'src/app/classes/companyWithIncomes';
@@ -13,7 +13,7 @@ import { CompaniesService } from 'src/app/services/companies.service';
 })
 export class CompaniesContainerComponent implements OnInit, OnDestroy {
   constructor(private companiesService: CompaniesService) {}
-  elementsPerPage = 10;
+  elementsPerPage = 25;
   currentPage = 1;
   sort: Sort = {
     asc: true,
@@ -23,7 +23,6 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
   filterValue = '';
   avaliableCompanies: Company[] = [];
   filteredCompanies$ = new Observable<CompanyWithIncomes[]>();
-  filterCompanies$ = new BehaviorSubject<string>('');
 
   subs: Subscription = new Subscription();
 
@@ -35,7 +34,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
     );
 
     this.subs.add(
-      this.filterCompanies$
+      this.companiesService.filterCompanies$
         .pipe(
           debounceTime(300),
           distinctUntilChanged(),

@@ -1,0 +1,10 @@
+<div class="fxrow fxcenter full-height">
+  <div class="clear" (click)="clearFilter()"></div>
+  <input
+    type="text"
+    name="filter"
+    placeholder="search..."
+    (input)="filterTable(inputValue.value)"
+    #inputValue
+  />
+</div>

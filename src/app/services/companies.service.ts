@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Company } from '../classes/company';
 import { CompanyWithIncomes } from '../classes/companyWithIncomes';
@@ -16,6 +16,8 @@ export class CompaniesService {
   private companiesUrl = this.basicUrl + 'companies/';
   private incomesUrl = this.basicUrl + 'incomes/';
   private companiesMap = new Map<number, CompanyWithIncomes>();
+
+  public filterCompanies$ = new BehaviorSubject<string>('');
 
   public getCompanies(): Observable<Company[]> {
     return this.http.get<Company[]>(this.companiesUrl).pipe(
@@ -147,5 +149,9 @@ export class CompaniesService {
         return of(error);
       })
     );
+  }
+
+  public filterTable(searchText: string) {
+    this.filterCompanies$.next(searchText);
   }
 }

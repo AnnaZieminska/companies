@@ -1,0 +1,33 @@
+.clear {
+  cursor: pointer;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  margin: 0 10px;
+  &:before,
+  &:after {
+    content: ' ';
+    position: absolute;
+    left: 10px;
+    height: 20px;
+    width: 2px;
+    background-color: #333;
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+}
+
+input {
+  border: 0;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  position: relative;
+  &:focus {
+    outline: none;
+  }
+}
