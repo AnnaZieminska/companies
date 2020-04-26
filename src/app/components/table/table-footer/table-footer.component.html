@@ -1,0 +1,25 @@
+<footer class="fx-vert-center fx-horiz-end fxflex">
+  <button (click)="endPage('first')" class="arrow-button">
+    <span class="arrow left end" [class.disabled]="leftArrowDisabled"></span>
+  </button>
+
+  <button (click)="nextPage(-1)" class="arrow-button">
+    <span class="arrow left" [class.disabled]="leftArrowDisabled"></span>
+  </button>
+
+  <span
+    *ngFor="let page of pagesToDisaply$ | async"
+    class="page"
+    [class.selected]="page.isSelected"
+    (click)="changePage(page.number)"
+    >{{ page.number }}</span
+  >
+
+  <button (click)="nextPage(1)" class="arrow-button">
+    <span class="arrow right" [class.disabled]="rightArrowDisabled"></span>
+  </button>
+
+  <button (click)="endPage('last')" class="arrow-button">
+    <span class="arrow right end" [class.disabled]="rightArrowDisabled"></span>
+  </button>
+</footer>

@@ -5,6 +5,7 @@ import { Company } from 'src/app/classes/company';
 import { CompanyWithIncomes } from 'src/app/classes/companyWithIncomes';
 import { Sort } from 'src/app/classes/sort';
 import { CompaniesService } from 'src/app/services/companies.service';
+import { Pagination } from 'src/app/classes/pagination';
 
 @Component({
   selector: 'app-companies-container',
@@ -15,6 +16,8 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
   constructor(private companiesService: CompaniesService) {}
   elementsPerPage = 25;
   currentPage = 1;
+  avaliablePages: Pagination[] = [];
+
   sort: Sort = {
     asc: true,
     name: 'id'
@@ -30,6 +33,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
     this.subs.add(
       this.companiesService.getCompanies().subscribe(companies => {
         this.avaliableCompanies = companies;
+        this.getAvaliablePages();
       })
     );
 
@@ -40,6 +44,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
           distinctUntilChanged(),
           tap(value => {
             this.filterValue = value;
+            this.currentPage = 1;
             this.sortAndfilterCompanies();
           })
         )
@@ -66,6 +71,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
       const filterText = this.filterValue
         ? this.filterValue.toLocaleLowerCase()
         : '';
+
       return (
         company.name.toLocaleLowerCase().indexOf(filterText) > -1 ||
         company.city.toLocaleLowerCase().indexOf(filterText) > -1
@@ -91,6 +97,25 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
       };
     }
 
+    this.sortAndfilterCompanies();
+  }
+
+  getAvaliablePages() {
+    const allRecords = this.avaliableCompanies.length;
+    const pages = allRecords / this.elementsPerPage;
+    const allPages = [];
+    for (let i = 1; i <= pages; i++) {
+      const page: Pagination = {
+        number: i,
+        isSelected: i === 1
+      };
+      allPages.push(page);
+    }
+    this.avaliablePages = [...allPages];
+  }
+
+  onChangePageNumber(pageNumber: number) {
+    this.currentPage = pageNumber;
     this.sortAndfilterCompanies();
   }
 }

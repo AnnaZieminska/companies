@@ -1,0 +1,27 @@
+$main-color: #009688;
+
+@mixin fxflex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+@mixin fxcol {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+@mixin fxrow {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+@mixin fxrowwrap {
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}

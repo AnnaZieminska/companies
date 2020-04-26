@@ -1,28 +1,28 @@
 <ng-container *ngIf="{ companies: filteredCompanies$ | async } as data">
-  <div
-    class="table-container"
-    [class.full-height]="data.companies && data.companies.length < 1"
-  >
-    <table class="companies-table full-height">
+  <div class="table-container">
+    <table
+      class="companies-table"
+      [class.full-height]="data.companies && data.companies.length < 1"
+    >
       <thead>
         <tr>
           <th class="column-id" (click)="sortTable('id')">
-            Id
+            <span>Id</span>
           </th>
           <th (click)="sortTable('name')">
-            Name
+            <span>Name</span>
           </th>
           <th class="column-details" (click)="sortTable('city')">
-            City
+            <span>City</span>
           </th>
           <th class="column-details" (click)="sortTable('totalIncome')">
-            Total
+            <span>Total</span>
           </th>
           <th class="column-details" (click)="sortTable('averageIncome')">
-            Average
+            <span>Average</span>
           </th>
           <th class="column-details" (click)="sortTable('lastMonthIncome')">
-            Last month
+            <span>Last month</span>
           </th>
         </tr>
       </thead>
@@ -59,4 +59,10 @@
       </tbody>
     </table>
   </div>
+
+  <app-table-footer
+    [avaliablePages]="avaliablePages"
+    [page]="currentPage"
+    (changePageNumber)="onChangePageNumber($event)"
+  ></app-table-footer>
 </ng-container>

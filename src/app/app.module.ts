@@ -6,12 +6,14 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CompaniesContainerComponent } from './components/companies-container/companies-container.component';
 import { CompaniesFilterComponent } from './components/companies-filter/companies-filter.component';
+import { TableFooterComponent } from './components/table/table-footer/table-footer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CompaniesContainerComponent,
-    CompaniesFilterComponent
+    CompaniesFilterComponent,
+    TableFooterComponent
   ],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [],

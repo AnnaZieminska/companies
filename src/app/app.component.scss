@@ -1,8 +1,16 @@
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+@import 'styles/vars';
+
+header {
+  background: $main-color;
+  height: 50px;
+  h1 {
+    font-size: 20px;
+    color: #fff;
+    padding-left: 15px;
+  }
+  & + div {
+    overflow: auto;
+  }
 }
 
 .companies-filter {
@@ -11,6 +19,5 @@ body {
 
 .companies-container {
   border-top: 1px solid #ddd;
-  height: calc(100% - 50px);
   overflow: auto;
 }
