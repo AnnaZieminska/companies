@@ -93,6 +93,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
         return 1;
       }
     });
+
     return sortedCompanies;
   }
 
@@ -105,6 +106,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
       return (
         company.name.toLocaleLowerCase().indexOf(filterText) > -1 ||
         company.city.toLocaleLowerCase().indexOf(filterText) > -1 ||
+        company.id.toString().startsWith(filterText) ||
         company.totalIncome.toString().startsWith(filterText) ||
         company.averageIncome.toString().startsWith(filterText) ||
         company.lastMonthIncome.toString().startsWith(filterText)
