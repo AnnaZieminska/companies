@@ -8,3 +8,10 @@
 .pointer {
   cursor: pointer;
 }
+
+@media (max-width: 800px) {
+  .arrow-button {
+    position: absolute;
+    right: 0;
+  }
+}

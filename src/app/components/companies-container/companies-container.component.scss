@@ -45,38 +45,44 @@
 
 @media (max-width: 800px) {
   .companies-table {
-    thead {
-      display: none;
-    }
-
+    thead,
     tbody {
       tr {
         height: auto;
-        border-bottom: 0;
-        @include fxrow;
-        @include fxflex;
-        @include fxrowwrap;
       }
+    }
 
-      td {
-        padding-top: 25px;
-        position: relative;
-        width: 50%;
-        border-bottom: 1px solid #ddd;
-        &:before {
-          content: attr(data-label);
-          position: absolute;
-          top: 0;
-          left: 0;
-          background: rgba(0, 0, 0, 0.1);
-          padding: 2px 10px;
-          font-size: 12px;
-        }
+    tr {
+      border-bottom: 0;
+      @include fxrow;
+      @include fxflex;
+      @include fxrowwrap;
+    }
+
+    td {
+      width: 50%;
+      padding-top: 25px;
+      position: relative;
+      border-bottom: 1px solid #ddd;
+      &:before {
+        content: attr(data-label);
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.1);
+        padding: 2px 10px;
+        font-size: 12px;
       }
-
-      .column-id,
-      .column-details {
+      &.column-id,
+      &.column-details {
         width: 50%;
+      }
+    }
+
+    th {
+      width: 50%;
+      &:nth-of-type(2n - 1) {
+        border-right: 1px solid #ddd;
       }
     }
   }
