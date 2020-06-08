@@ -1,9 +1,8 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
-  OnInit,
-  ViewChild,
-  ChangeDetectionStrategy
+  ViewChild
 } from '@angular/core';
 import { CompaniesService } from 'src/app/services/companies.service';
 
@@ -13,12 +12,10 @@ import { CompaniesService } from 'src/app/services/companies.service';
   styleUrls: ['./companies-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CompaniesFilterComponent implements OnInit {
+export class CompaniesFilterComponent {
   @ViewChild('inputValue', { static: false }) inputValueRef: ElementRef;
 
   constructor(private companiesService: CompaniesService) {}
-
-  ngOnInit() {}
 
   filterTable(searchText: string) {
     this.companiesService.filterTable(searchText);

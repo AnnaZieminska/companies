@@ -66,12 +66,10 @@ export class CompaniesService {
   public getCachedCompanies(
     companies: CompanyWithIncomes[]
   ): Observable<CompanyWithIncomes[]> {
-    const companiesWithIncomesToDisplay: CompanyWithIncomes[] = [];
-    companies.forEach(company => {
-      if (this.companiesMap.has(company.id)) {
-        companiesWithIncomesToDisplay.push(this.companiesMap.get(company.id));
-      }
-    });
+    const companiesWithIncomesToDisplay: CompanyWithIncomes[] = companies
+      .filter(company => this.companiesMap.has(company.id))
+      .map(company => this.companiesMap.get(company.id));
+
     return of(companiesWithIncomesToDisplay);
   }
 
@@ -80,6 +78,7 @@ export class CompaniesService {
     companies: Company[]
   ): CompanyWithIncomes[] {
     const companiesWithIncomes: CompanyWithIncomes[] = [];
+
     companies.forEach(company => {
       const companyIncomes = incomes.find(income => income.id === company.id);
       if (companyIncomes) {

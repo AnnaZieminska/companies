@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Header } from 'src/app/classes/header';
 
 @Component({
@@ -6,9 +6,8 @@ import { Header } from 'src/app/classes/header';
   templateUrl: './table-header.component.html',
   styleUrls: ['./table-header.component.scss']
 })
-export class TableHeaderComponent implements OnInit {
+export class TableHeaderComponent {
   @Input() header: Header;
-  constructor() {}
 
-  ngOnInit() {}
+  constructor() {}
 }

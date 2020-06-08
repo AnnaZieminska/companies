@@ -33,9 +33,7 @@ body {
 }
 
 .fx-vert-center {
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+  @include fx-vert-center;
 }
 
 .fx-horiz-center {

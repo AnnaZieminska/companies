@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CompaniesService } from 'src/app/services/companies.service';
 
 @Component({
@@ -12,14 +7,12 @@ import { CompaniesService } from 'src/app/services/companies.service';
   styleUrls: ['./error-indicator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ErrorIndicatorComponent implements OnInit {
+export class ErrorIndicatorComponent {
   @Input() error: string;
 
   constructor(private companiesService: CompaniesService) {}
 
-  ngOnInit() {}
-
-  closeErrror() {
+  closeError() {
     this.companiesService.showError('');
   }
 }

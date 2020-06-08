@@ -8,7 +8,7 @@ import {
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { CompanyWithIncomes } from 'src/app/classes/companyWithIncomes';
-import { Header, SortEnum } from 'src/app/classes/header';
+import { Header, SortEnum, tableHeader } from 'src/app/classes/header';
 import { Pagination } from 'src/app/classes/pagination';
 import { CompaniesService } from 'src/app/services/companies.service';
 
@@ -26,7 +26,7 @@ export class CompaniesContainerComponent implements OnInit, OnDestroy {
   elementsPerPage = 25;
   currentPage = 1;
   avaliablePages: Pagination[] = [];
-  avaliableHeaders = Header.getAvaliableHeaders();
+  avaliableHeaders = tableHeader;
 
   filterValue = '';
   avaliableCompanies: CompanyWithIncomes[] = [];
